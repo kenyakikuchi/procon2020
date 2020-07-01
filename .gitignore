@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# settei file
+.vscode/
+
+# mondai kankei
+question/
+answer/
+todolist.txt
+
+# gaibu library
+picojson/
