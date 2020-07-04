@@ -1,3 +1,6 @@
+#ifndef skills_h
+#define skills_h
+
 #include <iostream>
 #include <string>
 #include "../picojson/picojson.h"
@@ -16,4 +19,18 @@ namespace procon2020 {
 		~skills();
 		string get_row_string() { return row_string; }
 	};
+
+	skills::skills(picojson::object o)
+	{
+		row_value = o["skills"];
+		row_string = row_value.serialize();
+
+		cout << key_string << ": " << row_string << "\n" << endl;
+	}
+
+	skills::~skills()
+	{
+	}
 }
+
+#endif // skills_h

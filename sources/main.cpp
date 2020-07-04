@@ -49,9 +49,9 @@ ofstream ofs;	// 回答出力ストリーム
 
 picojson::value v;
 
-procon2020::skills* s;		// スキルインスタンス
-procon2020::tasks* t;		// タスクインスタンス
-procon2020::members* m;		// メンバーインスタンス
+procon2020::skills* s;		// スキル
+procon2020::tasks* t;		// タスク
+procon2020::members* m;		// メンバー
 
 int main(int argc, char** argv)
 {
@@ -69,19 +69,14 @@ int main(int argc, char** argv)
 	ifs.open(question_filename, ios::in);
 	istream& json = ifs;
 
-	string str;
-	while (getline(ifs, str)) {
-		cout << str << endl;
-	}
-
 	// 開いた問題をpicojsonクラスに渡す
 	picojson::parse(v, ifs);
 
 	// skills, tasks, membersを作成する
 	picojson::object& obj = v.get<picojson::object>();
-	//s = new procon2020::skills(obj);
-	//t = new procon2020::tasks(obj);
-	//m = new procon2020::members(obj);
+	s = new procon2020::skills(obj);
+	t = new procon2020::tasks(obj);
+	m = new procon2020::members(obj);
 
 	//// 回答を出力する
 	/*ofs.open(answer_path + answer_filename, ios::out);
