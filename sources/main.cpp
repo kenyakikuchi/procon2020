@@ -28,18 +28,18 @@ int main(int argc, char** argv)
 {
 	// コマンドライン引数でファイルが指定されているか確認
 	if (argv[1] == NULL) {
-		cout << NO_FILENAME << endl;
+		cout << MSG001_NO_FILENAME << endl;
 		exit(0);
 	}
 
 	// 問題ファイル名を一応表示
 	question_filename = argv[1];
-	cout << SHOW_FILENAME << question_filename << "\n" << endl;
+	cout << MSG002_SHOW_FILENAME << question_filename << "\n" << endl;
 
 	// 問題ファイルを開く
 	ifs.open(question_filename, ios::in);
 	if (ifs.fail()) {
-		cerr << FAILED_TO_OPEN_QUESTION_FILE << question_filename << endl;
+		cerr << MSG003_FAILED_TO_OPEN_QUESTION_FILE << question_filename << endl;
 		exit(1);
 	}
 	istream& json = ifs;
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 	}
 	catch (const exception& e)
 	{
-		cerr << FAILED_TO_PARSE << e.what() << endl;
+		cerr << MSG004_FAILED_TO_PARSE << e.what() << endl;
 		exit(2);
 	}
 	ifs.close();
@@ -60,14 +60,21 @@ int main(int argc, char** argv)
 	try {
 		picojson::object& obj = value.get<picojson::object>();
 		skills = new procon2020::skills(obj);
-		tasks = new procon2020::tasks(obj);
 		members = new procon2020::members(obj);
+		tasks = new procon2020::tasks(obj);		// 実行可能メンバーの前処理のため、members->tasksの順に読み込む
 	}
 	catch (const exception& e)
 	{
-		cerr << FAILED_TO_MAKE_STM << e.what() << endl;
+		cerr << MSG005_FAILED_TO_MAKE_STM << e.what() << endl;
 		exit(3);
 	}
+
+	// 実タスクを出力する
+	tasks->show_available_tasks();
+
+	// 実タスクに対し、実行可能なメンバを求める
+	tasks->check_available_members(*members);
+	tasks->show_available_members(*members);
 
 	//// 回答を出力する
 	/*ofs.open(answer_path + answer_filename, ios::out);
