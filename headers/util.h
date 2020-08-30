@@ -43,11 +43,6 @@ namespace procon2020 {
 		// キーごとにオブジェクトの配列を持っていることまでは共通
 		value = o[key];
 		array = value.get<picojson::array>();
-		cout << key << ":" << endl;
-		for (auto arr : array) {
-			cout << arr << endl;
-		}
-		cout << endl;
 	}
 
 	util::~util()

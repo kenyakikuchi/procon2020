@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 	// 問題ファイル名を一応表示
 	question_filename = argv[1];
-	cout << MSG002_SHOW_FILENAME << question_filename << "\n" << endl;
+	//cout << MSG002_SHOW_FILENAME << question_filename << "\n" << endl;
 
 	// 問題ファイルを開く
 	ifs.open(question_filename, ios::in);
@@ -42,7 +42,6 @@ int main(int argc, char** argv)
 		cerr << MSG003_FAILED_TO_OPEN_QUESTION_FILE << question_filename << endl;
 		exit(1);
 	}
-	istream& json = ifs;
 
 	// 開いた問題をパースしてvalueに渡し、ファイルを閉じる
 	try {
@@ -54,14 +53,13 @@ int main(int argc, char** argv)
 		cerr << MSG004_FAILED_TO_PARSE << e.what() << endl;
 		exit(2);
 	}
-	ifs.close();
 
 	// skills, tasks, membersを作成する
 	try {
 		picojson::object& obj = value.get<picojson::object>();
 		skills = new procon2020::skills(obj);
 		members = new procon2020::members(obj);
-		tasks = new procon2020::tasks(obj);		// 実行可能メンバーの前処理のため、members->tasksの順に読み込む
+		tasks = new procon2020::tasks(obj);
 	}
 	catch (const exception& e)
 	{
@@ -69,18 +67,27 @@ int main(int argc, char** argv)
 		exit(3);
 	}
 
+	// タスク一覧を出力する
+	//tasks->show_all_tasks();
+
 	// 実タスクを出力する
-	tasks->show_available_tasks();
+	//tasks->show_available_tasks();
 
-	// 実タスクに対し、実行可能なメンバを求める
+	// 実タスクに対し、実行可能なメンバーを求める
 	tasks->check_available_members(*members);
-	tasks->show_available_members(*members);
+	//tasks->show_available_members(*members);
 
-	//// 回答を出力する
-	/*ofs.open(answer_path + answer_filename, ios::out);
-	ofs << s->get_row_string() << endl;*/
+	// 実タスクに対し、実行メンバーをランダムに割り当てる
+	tasks->assign_random();
 
-	ifs.close();
+	// タスクの実行順を決める
+	tasks->calc_days();
+
+	// 回答を出力する
+	//ofs.open(answer_path + answer_filename, ios::out);
+	//ofs << s->get_row_string() << endl;
+	tasks->output_answer();
+
 	//ofs.close();
 
 	return 0;

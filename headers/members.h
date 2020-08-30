@@ -2,6 +2,7 @@
 #define members_h
 
 #include <typeinfo>
+#include <map>
 #include "util.h"
 
 using namespace std;
@@ -10,14 +11,26 @@ namespace procon2020 {
 	class members : public util
 	{
 	private:
+		map<string, vector<string>> _members;
 	public:
 		members(picojson::object);
 		~members();
+		map<string, vector<string>> get_map() { return _members; }
 		vector<int> judge_task(picojson::value);
 	};
 
+	// vector<picojson::value> のままだと取り扱いづらいので、map<id, skillIds>で保持する
 	members::members(picojson::object o) : util(o, key_members)
 	{
+		for (auto arr : array) {
+			picojson::object obj = arr.get<picojson::object>();
+			string id = obj["id"].to_str();
+			vector<string> skillIds;
+			for (auto skillId : obj["skillIds"].get<picojson::array>()) {
+				skillIds.push_back(skillId.to_str());
+			}
+			_members[id] = skillIds;
+		}
 	}
 
 	members::~members() {
